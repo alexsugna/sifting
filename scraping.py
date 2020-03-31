@@ -3,6 +3,8 @@ This file scrapes wikipedia for information on a subject. It then
 compiles that information to a text file that can be used for 
 text generation in a rnn.
 
+Run this file with python3 scraping.py <wiki_url> <textfilename> 
+
 Alex Angus
 
 March 21, 2020
@@ -12,7 +14,8 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 from bs4.element import Comment
-import text_generation
+#import text_generation
+import sys
 
 
 class Page():
@@ -127,7 +130,7 @@ def scrape_page(url, get_links=False):
 
 
 def main():
-    picasso_url = 'https://en.wikipedia.org/wiki/Pablo_Picasso'
+    picasso_url = sys.argv[1]
     pages = []
     picasso = scrape_page(picasso_url, get_links=True)    
     pages.append(picasso)
@@ -149,14 +152,14 @@ def main():
             print("Page: ", page.title)
             print("Number of links in queue: ", len(link_queue))
             count += 1
-        if count > 100:
+        if count > 0:
             break
-    text_file = open("training_text.txt", 'w')
+    text_file = open(sys.argv[2], 'w')
     for page in pages:
         text_file.writelines(page.text)
     text_file.close()
     
-    train = True
+    train = False
     if train:
         text_generation.train()
     
